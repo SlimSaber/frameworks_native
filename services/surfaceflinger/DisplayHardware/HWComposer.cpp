@@ -1136,7 +1136,12 @@ public:
         getLayer()->transform = transform;
     }
     virtual void setFrame(const Rect& frame) {
-        reinterpret_cast<Rect&>(getLayer()->displayFrame) = frame;
+        union {
+            hwc_rect_t* displayFrame;
+            const Rect* inframe;
+        };
+        inframe = &frame;
+        getLayer()->displayFrame = *displayFrame;
     }
     virtual void setCrop(const FloatRect& crop) {
         /*
